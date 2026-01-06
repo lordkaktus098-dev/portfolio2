@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Charlie Kirk Calendar</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="calendar">
+    <div class="header">
+      <h1 id="monthYear"></h1>
+      <div class="meta" id="ckDate"></div>
+    </div>
+
+    <div class="weekdays">
+      <div>Mo</div><div>Tu</div><div>We</div><div>Th</div>
+      <div>Fr</div><div>Sa</div><div>Su</div>
+    </div>
+
+    <div class="days" id="days"></div>
+  </div>
+
+  <script>
+    // ===== CONFIG =====
+    const birth = new Date(1993, 4, 14); // 14 May 1993
+    const death = new Date(2025, 5, 1);  // 1 June 2025 (død ca. et halvt år siden)
+    // ==================
+
+    const today = new Date();
+
+    const months = [
+      "January","February","March","April","May","June",
+      "July","August","September","October","November","December"
+    ];
+
+    function ckDate(date) {
+      if (date < birth) {
+        return {
+          era: "BK",
+          year: birth.getFullYear() - date.getFullYear()
+        };
+      }
+
+      if (date <= death) {
+        return {
+          era: "DK",
+          year: date.getFullYear() - birth.getFullYear() + 1
+        };
+      }
+
+      // AFTER KIRK
+      const diff = date.getFullYear() - death.getFullYear();
+      return {
+        era: "AK",
+        year: diff === 0 ? 0 : diff
+      };
+    }
+
+    const ck = ckDate(today);
+
+    document.getElementById("monthYear").textContent =
+      `${months[today.getMonth()]} ${today.getFullYear()}`;
+
+    document.getElementById("ckDate").textContent =
+      `${today.getDate()}-${today.getMonth() + 1}-${ck.year} ${ck.era}`;
+
+    const daysEl = document.getElementById("days");
+
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    let start = firstDay.getDay();
+    start = start === 0 ? 6 : start - 1;
+
+    const daysInMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0
+    ).getDate();
+
+    for (let i = 0; i < start; i++) {
+      daysEl.appendChild(document.createElement("div"));
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cell = document.createElement("div");
+      cell.textContent = d;
+      if (d === today.getDate()) cell.classList.add("today");
+      daysEl.appendChild(cell);
+    }
+  </script>
+</body>
+</html>
